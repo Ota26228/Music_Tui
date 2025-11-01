@@ -1,0 +1,14 @@
+[package]
+name = "music_cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# TUI描画フレームワーク
+ratatui = "0.26" 
+# ターミナル制御とキー入力
+crossterm = "0.27" 
+# ロギングやデバッグなどに std::io::Error を簡単に Box<dyn Error> に変換するため
+anyhow = "1.0"
+rodio = { version = "0.17.3", features = ["mp3"] }
+dirs = "5.0.1"
