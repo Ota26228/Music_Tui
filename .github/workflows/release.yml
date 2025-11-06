@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.*'
+
+jobs:
+  build_and_release:
+    name: Build and Release for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            binary_name: music_cli
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            binary_name: music_cli
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary_name: music_cli.exe
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build binary
+        run: cargo build --release --target ${{ matrix.target }} --locked
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          # This will upload the built binary as a release asset.
+          # The action is smart enough to only create the release once
+          # and then append assets from the other jobs.
+          files: target/${{ matrix.target }}/release/${{ matrix.binary_name }}
